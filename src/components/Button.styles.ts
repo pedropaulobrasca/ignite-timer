@@ -16,11 +16,12 @@ export const ButtonContainer = styled.button<ButtonContainerProps>`
   width: 100px;
   height: 50px;
 
-  background-color: ${(props) => props.theme.colors.background};
-  color: ${(props) => props.theme.colors.text};
+  border-radius: 8px;
+  border: 0;
+  margin: 8px;
 
-  /* background-color: ${({ variant }) => buttonVariants[variant]} */
-  /* ${({ variant }) => css`
-    background-color: ${buttonVariants[variant]};
-  `} */
+  background-color: ${({ theme }) => theme['green-500']};
+  color: ${({ theme }) => theme['gray-100']};
+
+  font-weight: bold;
 `
