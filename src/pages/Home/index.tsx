@@ -1,5 +1,7 @@
 import { Play } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod'
 import {
   CountdownContainer,
   FormContainer,
@@ -10,12 +12,21 @@ import {
   TaskInput,
 } from './styles'
 
+const newCycleFormValidationSchema = zod.object({
+  task: zod.string().min(1, 'Digite o nome da tarefa'),
+  minutesAmount: zod.number().min(5).max(60),
+})
+
 export function Home() {
-  const { register, handleSubmit, watch } = useForm()
+  const { register, handleSubmit, watch, formState } = useForm({
+    resolver: zodResolver(newCycleFormValidationSchema),
+  })
 
   function handleCreateNewCycle(data: any) {
     console.log(data)
   }
+
+  console.log(formState.errors)
 
   const task = watch('task')
   const isSubmitDisabled = !task
@@ -29,9 +40,7 @@ export function Home() {
             list="tasks"
             id="task"
             placeholder="Dê um nome para o seu projeto"
-            {...register('task', {
-              required: true,
-            })}
+            {...register('task')}
           />
 
           <datalist id="tasks">
@@ -47,10 +56,8 @@ export function Home() {
             placeholder="00"
             step={5}
             min={5}
-            max={60}
             {...register('minutesAmount', {
               valueAsNumber: true,
-              required: true,
             })}
           />
 
