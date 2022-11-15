@@ -54,7 +54,10 @@ export function Home() {
         setAmountSecondsPassed(amountSecondsPassed)
       }, 1000)
 
-      return () => clearInterval(interval)
+      return () => {
+        clearInterval(interval)
+        setAmountSecondsPassed(0)
+      }
     }
   }, [activeCycle])
 
@@ -84,6 +87,12 @@ export function Home() {
 
   const minutesAmountFormatted = String(minutesAmount).padStart(2, '0')
   const secondsAmountFormatted = String(secondsAmount).padStart(2, '0')
+
+  useEffect(() => {
+    if (activeCycle) {
+      document.title = `${minutesAmountFormatted}:${secondsAmountFormatted} - Pomodoro`
+    }
+  }, [minutesAmountFormatted, secondsAmountFormatted, activeCycle])
 
   const task = watch('task')
   const isSubmitDisabled = !task
