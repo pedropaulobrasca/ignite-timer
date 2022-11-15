@@ -28,6 +28,7 @@ interface Cycle {
   minutesAmount: number
   startDate: Date
   interruptedDate?: Date
+  finishedDate?: Date
 }
 
 export function Home() {
@@ -44,6 +45,7 @@ export function Home() {
   })
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
 
   useEffect(() => {
     if (activeCycle) {
@@ -53,7 +55,28 @@ export function Home() {
           activeCycle.startDate,
         )
 
-        setAmountSecondsPassed(amountSecondsPassed)
+        if (amountSecondsPassed >= totalSeconds) {
+          setCycles((state) =>
+            state.map((cycle) => {
+              if (cycle.id === activeCycleId) {
+                return {
+                  ...cycle,
+                  finishedDate: new Date(),
+                }
+              }
+
+              return cycle
+            }),
+          )
+
+          setActiveCycleId(null)
+
+          setAmountSecondsPassed(0)
+
+          clearInterval(interval)
+        } else {
+          setAmountSecondsPassed(amountSecondsPassed)
+        }
       }, 1000)
 
       return () => {
@@ -61,7 +84,7 @@ export function Home() {
         setAmountSecondsPassed(0)
       }
     }
-  }, [activeCycle])
+  }, [activeCycle, totalSeconds, activeCycleId])
 
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = String(new Date().getTime())
@@ -98,7 +121,6 @@ export function Home() {
 
   // console.log(formState.errors)
 
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
   const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0
 
   const minutesAmount = Math.floor(currentSeconds / 60)
